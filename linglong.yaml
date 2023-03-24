@@ -1,0 +1,42 @@
+package:
+  id: mpv
+  version: 0.29.1.37
+  kind: lib
+
+base:
+  id: org.deepin.base
+  version: 20.5.0
+
+source:
+  kind: git
+  url: https://github.com/deepin-community/mpv.git
+  version: 0.29.1.37
+  commit: 1183259bebef845ee05d8231e0886b6e52eb2715
+  patch:
+  - 0001-waf.patch
+  - 0002-Add-keywords-to-desktop-file.patch
+  - 0003-io-stdin-used.patch
+build:
+  kind: manual
+  manual:
+    configure: |
+      #if linux, enable-dvbin
+      export CC=gcc
+      export ARCH_CONFIGURE="--enable-dvbin"
+      python3 ./waf configure \
+                        --prefix=${PREFIX} \
+                        --libdir=${PREFIX}/lib \
+                        --confdir=${PREFIX}/etc/mpv \
+                        --zshdir=${PREFIX}/share/zsh/vendor-completions	\
+                        --enable-cdda \
+                        --enable-dvdnav	\
+                        --enable-dvdread \
+                        --enable-libmpv-shared \
+                        --enable-libsmbclient \
+                        --enable-sdl2 \
+                        --enable-sndio \
+                        --enable-zsh-comp \
+                        --disable-build-date \
+                        --enable-dvbin
+      python3 ./waf -v build
+      python3 ./waf -v install
